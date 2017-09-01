@@ -1,0 +1,114 @@
+The U.S. Census Bureau projects population based on the following assumptions
+
+There is one birth every 7 seconds
+There is one death every 13 seconds
+There is one new immigrant every 45 seconds
+Using program design language, write an algorithm that a program
+  can use to calculate and display the population for each of the next five years.
+  You must post your solution in the discussion topic thread.
+  Do not write actual code for this assignment.
+
+Your algorithm must prompt users for the current population,
+  and the birth, death, and immigration rates.
+  Use Java comments to annotate your algorithm.
+
+Please be sure to read the tutorial on problem solving before attempting this exercise.
+
+<p class="emphasis-bold">Considerations</p>
+<ol>
+  <li><span class = emphasis-mild">Outputs</span> Population for each of the next five years</li>
+  <li><span class = emphasis-mild">Inputs</span>
+    <ul>
+      <li><Current Population</li>
+      <li>Birth Rate</li>
+      <li>Death Rate</li>
+      <li>Immigration Rate</li>
+    </ul>
+  </li>
+  <li><span class = emphasis-mild">Input workflows</span> Program prompts user for each input </li>
+  <li><span class = emphasis-mild">Permissible editing</span>
+    <ul>
+      <li>Population cannot be negative </li>
+      <li>Birth and death rate cannot be negative </li>
+    </ul>
+  </li>
+  <li>
+    <span class = emphasis-mild">Information persistence</span> This is calculator that displays information.
+    No saving is necessary
+  </li>
+  <li>
+    <span class = "emphasis-mild">Assumptions</span>
+    <ol>
+        <li>The program will always output a 5 year projection. This should
+        be discussed with the project sponsor for confirmation. If it may change, this
+        can be added to the list of inputs</li>
+        <li>The birth/death/immigration rates do not change annually, and are instead fixed</li>
+        <li>One year is 365.25 days. Confirm project sponsor agrees, or would they rather match
+          to a calendar year, with the possibility of a leap year</li>
+        <li>All rates are being input as a ratio of second (num / sec)</li>
+      </ol>
+  </li>
+  <li><span class = emphasis-mild">Problem simplification</span>
+    <ul>
+      <li>Input and data cleansing</li>
+      <li>Calculation</li>
+      <li>Format and output</li>
+    </ul>
+  </li>
+  <li><span class = emphasis-mild">Alternate solutions</span> Vary input options (such as procuring info from a file) </li>
+</ol>
+
+Program Design Language
+
+/*
+This program calculates the estimated population for each of the next 5 years
+*/
+Initiate variable current_population = 0  //the starting population
+Initiate variable birth_rate = 0          //the birth rate
+Initiate variable death_rate = 0          //the death rate
+Initiate variable immigration_rate = 0    //the immigration rate
+Initiate variable iterations = 0          //how many years have been projected
+
+Initiate variable total_births = 0          //annual # of births
+Initiate variable total_deaths = 0          //annual # of deaths
+Initiate variable total_immigrants = 0      //annual # of immigrants
+
+Constant MAX_YEAR_PROJECTIONS = 5         //how many years the program projects
+
+Prompt user for current population
+Edit input to ensure a positive number
+Store input into current_population variable
+
+Prompt user for birth rate
+Edit input to ensure a positive number
+Store input into birth_rate variable
+Convert birth_rate into an annual calculation
+  [TDSR] (365.25 days * 24 hours * 60 minutes * 60 seconds) / birth_rate [/TDSR]
+Store annual birth rate into total_births
+
+Prompt user for death rate
+Edit input to ensure a positive number
+Store input into death_rate variable
+Convert death_rate into an annual calculation
+  [TDSR] (365.25 days * 24 hours * 60 minutes * 60 seconds) / death_rate [/TDSR]
+Store annual death rate into total_deaths
+
+//Note: we do not test immigration for positivity because there can be a net
+// outflow due to emigration
+Prompt user for immigration rate
+Store input into immmigration_rate variable
+Convert immigration_rate into an annual calculation
+  [TDSR] (365.25 days * 24 hours * 60 minutes * 60 seconds) / immigration_rate [/TDSR]
+Store annual immigration rate into total_immigrants
+
+//Create a loop to calculate each yearly population
+
+Initiate variable running_total         //stores the running total population
+Set running_total = current_population  //running total starts at current
+
+While iterations is less than MAX_YEAR_PROJECTIONS
+  add total_births to running_total
+  subtract total_births from running_total
+  add total_immigrants to running_total //if negative, running total will reduce
+  format running_total to desired output
+  output formatted running_total to screen
