@@ -102,7 +102,6 @@ Convert immigration_rate into an annual calculation
 Store annual immigration rate into total_immigrants
 
 //Create a loop to calculate each yearly population
-
 Initiate variable running_total         //stores the running total population
 Set running_total = current_population  //running total starts at current
 
@@ -112,3 +111,6 @@ While iterations is less than MAX_YEAR_PROJECTIONS
   add total_immigrants to running_total //if negative, running total will reduce
   format running_total to desired output
   output formatted running_total to screen
+
+  //Increment the iteration variable
+  Set iterations = iterations + 1
