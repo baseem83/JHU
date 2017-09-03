@@ -1,11 +1,11 @@
-/*
-    This program outputs text to a command window using a 
-    moasic-like structue. Individual letters are combined to 
-    create the appearance of larger letter.
+/**
+    * This program outputs text to a command window using a 
+    * moasic-like structue. Individual letters are combined to 
+    * create the appearance of larger letter.
+	* @author Baseem Astiphan
+	* @version 1.0.0.0
 */
 
-//NOTES TO SELF: Consider adding a javadoc compliant opening comment
-//include some of the attributes (@author, etc) found in textbook
 public class JavaOutput
 {
     public static void main(String [] args)
