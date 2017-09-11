@@ -25,7 +25,7 @@ public class NumericEntry
         
         // Use a Scanner to input integer values
         Scanner input = new Scanner( System.in );
-        System.out.println( "\n\n" );   //Whitespace for formatting
+        System.out.println( "\n\n" );   //Blank lines for formatting
         System.out.print( "Enter 6 integers separated by a blank space:" );
         userNum1 = input.nextInt();     // Input first value
         userNum2 = input.nextInt();     // Input second value
