@@ -41,17 +41,18 @@ public class RandomNumberGame
 {
     public static void main(String [] args)
     {
-        System.out.println("Welcome to the Random Number Game!");
-        System.out.println("************************************************");
+        System.out.println("\n\nWelcome to the Random Number Game!");
+        //System.out.println("************************************************");
+        System.out.println("----------------------------------");
         System.out.println("INSTRUCTIONS");
-        System.out.println("------------------------------------------------");
+        System.out.println("--------------------------------------------------------");
         System.out.println("\tEnter an upper bound for the random number.");
         System.out.println("\tThe program will generate a number between 1 and");
         System.out.println("\tthe designated upper bound. ");
-        System.out.print("\tSelect the maximum number of guesses ");
-        System.out.println("you'd like to use.");
-        System.out.println("\nGood luck!");
-        System.out.println("-------------------------------------------------\n");
+        System.out.println("\tSelect the maximum number of guesses ");
+        System.out.println("\tyou'd like to use.");
+        System.out.println("--------------------------------------------------------");
+        System.out.println("\nGood luck!\n");
         
         Scanner input = new Scanner(System.in);
         int maxNumber = 1;     //the upper bound of the random number range
@@ -107,6 +108,8 @@ public class RandomNumberGame
             }
             while (inputError);
             
+            System.out.println(); //Blank lines for formatting
+            
             //Generate and store the random number
             numberToGuess = (int)(maxNumber * Math.random()) + 1;
             
@@ -137,22 +140,37 @@ public class RandomNumberGame
                     
                     if (currentGuess == numberToGuess)
                     {
-                        System.out.print("Congratualtions. You guessed the ");
+                        System.out.print("\nCongratualtions. You guessed the ");
                         System.out.println("random number correctly.");
                         System.out.println("You used " + i + " guess(es)");
                         break success;
                     }
                     else
                     {
-                        System.out.println("Sorry, that was incorrect.");
+                        System.out.println("\nSorry, that was incorrect.");
+                        if (currentGuess > numberToGuess)
+                        {
+                            System.out.println("Your guess was too high.");
+                        }
+                        else
+                        {
+                            System.out.println("Your guess was too low.");
+                        }
                         System.out.println((maxGuesses - i) + " guesses reamining.");
+                        System.out.println();
                     }
                 }
                 
                 System.out.println("Sorry, you are out of guesses.");
-                System.out.println("The correct answer was " + numberToGuess + ".");
-                
+                System.out.println("The correct answer was " + numberToGuess + ".\n");   
             }
+            System.out.print("\n\nType 'Y' to play again: ");
+            if (!input.next().toLowerCase().equals("y"))
+            {
+                break;
+            }
+            
+            System.out.println("\n");
         }
         
     }
