@@ -1,38 +1,9 @@
-/* Welcome the user and explain the instructions
-    "Guess the Random Number"
-    **********************************
-    Enter a maximum and the computer will generate 
-    a random number between 1 and your maximum. Designate
-    the number of guesses within which you would like to 
-    guess the random number. GOOD LUCK!
-    **********************************
-    
-    Infinite loop (while (true))
-        You can exit at any time by entering the letter 'q'
-        
-        Enter a designated maximum
-            Test for quit
-            Error --> continue
-        How many guesses would you like to use?
-            Test for quit
-            Error --> continue
-            
-        OK. I've selected a random number.
-        You have NNN guesses to figure it out!
-        for loop
-            "Guess " + i
-            Test for quit
-            Error --> continue
-            Test for equality
-                Congrats, you've won!
-                Continue
-                --
-                Sorry, try again
-            
-        Sorry, you have not guessed in the correct number.
-        The number was: NNN
-            
-        
+/**
+    * This game gives a player the opportunity to guess a random number.
+	* The user specifies the range of the random number and the number
+	* of guesses he/she would like to use. 
+    * @author:Baseem Astiphan
+    * @version:1.0.0.0
 */
 
 import java.util.Scanner;
@@ -41,6 +12,10 @@ public class RandomNumberGame
 {
     public static void main(String [] args)
     {
+		/*  
+			The below block of code introduces the game and the 
+			instructions of the game.
+		*/
         System.out.println("\n\nWelcome to the Random Number Game!");
         //System.out.println("************************************************");
         System.out.println("----------------------------------");
@@ -67,7 +42,8 @@ public class RandomNumberGame
             inputError = false; //reset inputError
             
             //Use a do while loop here to test for incorrect input and requery
-            //user for the upper bound of the random range
+            //user for the upper bound of the random range. Number must be 
+			//positive intger
             do
             {
                 System.out.print("Upper bound for the random number: ");
@@ -77,14 +53,23 @@ public class RandomNumberGame
                 if (inputError)
                 {
                     input.next();   //flush out the scanner
-                    System.out.println("\nPlease enter a whole number!");
+					
+					//Display error message to user
+                    System.out.println("\nPlease enter a positive whole number!");
                 }
                 else 
                 {
                     maxNumber = input.nextInt(); //set upper boundary
+					
+					//Confirm entry is positive number greater than 1
+					if (maxNumber <= 1)
+					{
+						inputError = true;
+						System.out.println("\nPlease enter a positive whole number!");
+					}
                 }
             }
-            while (inputError);
+            while (inputError); //retry if not an integer
             
             System.out.println(); //Blank lines for formatting
             
@@ -99,22 +84,41 @@ public class RandomNumberGame
                 if (inputError)
                 {
                     input.next();   //flush out the scanner
+					
+					//Display error message to user
                     System.out.println("\nPlease enter a whole number!");
                 }
                 else 
                 {
                     maxGuesses = input.nextInt(); //set upper boundary
+					
+					//Confirm entry is positive number greater than 1
+					if (maxGuesses <= 1)
+					{
+						inputError = true;
+						System.out.println("\nPlease enter a positive whole number!");
+					}
                 }
             }
-            while (inputError);
+            while (inputError); //retry if not an integer
             
             System.out.println(); //Blank lines for formatting
             
             //Generate and store the random number
             numberToGuess = (int)(maxNumber * Math.random()) + 1;
-            
-            int i;
-            
+			
+            int i;  //iterator variable            
+			
+			/*  The below block encapsulates the game's guessing logic. 
+				The success label allows an inner loop to break out of
+				the code encapsulated in the label. The loop controlling 
+				individual user guesses is inside of this 'success' block.
+				If the loop fully processes, it follows that the user never
+				correctly guessed the number. He/she will come to the lines
+				indicating a lack of success. If the user does guess correctly,
+				he will break out of the entire block and never come to these 
+				lines of code.
+			*/
             success: {
                 for (i = 1; i <= maxGuesses; i++)
                 {
@@ -136,41 +140,56 @@ public class RandomNumberGame
                             currentGuess = input.nextInt(); //store current guess
                         }
                     }
-                    while (inputError);
+                    while (inputError);  //retry if incorrect type
                     
+					//Check if the user guessed the number correctly
                     if (currentGuess == numberToGuess)
                     {
+						//Display a success message
                         System.out.print("\nCongratualtions. You guessed the ");
                         System.out.println("random number correctly.");
                         System.out.println("You used " + i + " guess(es)");
+						
+						// Break out of the game logic, since the user was successful
                         break success;
                     }
-                    else
+                    else  //incorrect guess
                     {
                         System.out.println("\nSorry, that was incorrect.");
                         if (currentGuess > numberToGuess)
                         {
-                            System.out.println("Your guess was too high.");
+                            System.out.println("Too high."); //Guess too high
                         }
                         else
                         {
-                            System.out.println("Your guess was too low.");
+                            System.out.println("Too low.");  //Guess too low
                         }
+						
+						//Output number of remaining guesses
                         System.out.println((maxGuesses - i) + " guesses reamining.");
                         System.out.println();
                     }
                 }
                 
+				/*  User only gets to these lines if the for loop completely terminated
+					without a break out of the 'success' block of code. User loses
+				*/
                 System.out.println("Sorry, you are out of guesses.");
+				
+				//Print the correct answer
                 System.out.println("The correct answer was " + numberToGuess + ".\n");   
             }
+			
+			//Offer the user another attempt, if they press 'y'
             System.out.print("\n\nType 'Y' to play again: ");
+			
+			//Permit both a capital or a lower case 'y', to limit confusion
             if (!input.next().toLowerCase().equals("y"))
             {
-                break;
+                break; //User does not want to play again. QUIT
             }
             
-            System.out.println("\n");
+            System.out.println("\n"); //Formatting
         }
         
     }
