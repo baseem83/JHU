@@ -28,7 +28,7 @@ public class PlusSignGenerator
         maximumPlusSigns = input.nextInt(); //read in max plus signs
         
         //Prompt user for the sort order
-        System.out.print("Select sort order (1 = decreasing 2 = increasing:) ");
+        System.out.print("Select sort order (1 = decreasing 2 = increasing): ");
         sortOrder = input.nextByte(); //read in sort order
         
         /*
@@ -59,13 +59,18 @@ public class PlusSignGenerator
             //Locally scoped variable -- number of symbols in this rows
             int rowPlus;    // This will vary based on sort order
             
-            /* Below calculates number of plus symbols for the row. Since there are
-               only two options, I processed using a ternary operator. If more 
-               options should be introduced, consider a switch statement.
+            /* Below calculates number of plus symbols for the row. Since there
+               are only two options, I processed using a ternary operator. If 
+               more options should be introduced, consider a switch statement. 
+			   This calc leverages that a relationship always exists between 
+			   the iterator and the current row. In descreasing order, the calc 
+			   is the max number of plus signs minus the iteration, plus 1 to 
+			   account for boundary values. In increasing order, it is simply 
+			   the value of the iterator variable.
             */
             rowPlus = (sortOrder == 1) ? maximumPlusSigns - i + 1 : i;
             
-            //Inner loop to write the plus symbols
+            //Inner loop to write the correct number of symbols
             for (int j = 1; j <= rowPlus; j++)
             {
                 System.out.print(CHARACTER_TO_SCREEN);
