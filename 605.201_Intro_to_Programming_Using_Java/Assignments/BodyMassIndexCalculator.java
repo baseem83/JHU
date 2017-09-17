@@ -16,7 +16,7 @@ public class BodyMassIndexCalculator
     public static void main (String [] args)
     {
         float weight;             //User weight in pounds
-        float height;             //User heigh in inches
+        float height;             //User height in inches
         float bodyMassIndex;    //BMI Calculation
         
         //Use a scanner to read user inputs
@@ -33,7 +33,7 @@ public class BodyMassIndexCalculator
         height *= INCHES_TO_METERS;      //use shorthand notation
         weight *= LBS_TO_KILO; //use shorthand notation
         
-        //Calculate bodyMassIndex. NOTE: Math.pow() returns type double
+        //Calculate bodyMassIndex. NOTE: Math.pow() returns a double type
         //so explicitly cast it to a float
         bodyMassIndex = weight / (float)Math.pow(height, 2);
         System.out.println("Body Mass Index: " + bodyMassIndex);
@@ -43,7 +43,7 @@ public class BodyMassIndexCalculator
         System.out.println("\tUnderweight: less than 18.5");
         System.out.println("\tNormal: 18.5 - 24.9");
         System.out.println("\tOverweight: 25.0 - 29.9");
-        System.out.println("\tObese: over 30");
+        System.out.println("\tObese: 30 or greater");
     }
 }
 
