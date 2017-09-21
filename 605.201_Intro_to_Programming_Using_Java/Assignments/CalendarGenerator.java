@@ -1,36 +1,80 @@
 public class CalendarGenerator
 {
+    static final int spacing = 4;
     public static void main (String [] args)
     {
-        printMonthHeader(9, 2017);
-        printMonthBody(9, 2017);
+        printMonthCalendar(2, 2016);
+        
+        allCalendars(2016);
     
     }
     
-    // public static void printMonthCalendar(int month, int year)
-    // {
-        
-        
-    // }
+    static void allCalendars(int year)
+    {
+        for (int i = 1; i <=12; i++)
+        {
+            printMonthCalendar(i, year);
+        }
+    }
+    
+    public static void printMonthCalendar(int month, int year)
+    {
+        printMonthHeader(month, year);
+        printMonthBody(month, year);
+    }
 
     public static void printMonthHeader(int month, int year)
     {
-        System.out.print(addLeadingSpaces(getMonthName(month), 20));
-        System.out.print(addLeadingSpaces(Integer.toString(year), 7));
+        System.out.print(addLeadingSpaces(getMonthName(month), 16));
+        System.out.print(addLeadingSpaces(Integer.toString(year), 6));
         System.out.println();
         
         System.out.println(new String(new char[35]).replace('\0', '-'));
         
         for (int i = 0; i < 7; i++)
         {
-            System.out.print(addLeadingSpaces(getDayName(i % 7), 4));
+            System.out.print(addLeadingSpaces(getDayName(i % 7), spacing));
         }
         System.out.println();
     }
 
     public static void printMonthBody(int month, int year)
     {
+        int start = getStartDay(month, year) % 7;
         
+        for (int i = 0; i < getNumDaysInMonth(month, year) + start; i++)
+        {   
+            if (i < start)
+            {
+                System.out.print(addLeadingSpaces("", spacing));
+                continue;
+            }
+            
+            System.out.print(addLeadingSpaces(Integer.toString(i - start + 1), spacing));
+            
+            
+            if ((i + 1) % 7 == 0)
+            {
+                System.out.println();
+            }
+        
+        // for (int i = 1; i <= getNumDaysInMonth(month, year) + start; i++)
+        // {   
+            // if (i <= start)
+            // {
+                // System.out.print(addLeadingSpaces("", spacing));
+                // continue;
+            // }
+            
+            // System.out.print(addLeadingSpaces(Integer.toString(i - start), spacing));
+            // if (i % 7 == 0)
+            // {
+                // System.out.println();
+            // }
+        // }
+        }   
+
+        System.out.println();        
     }
 
     public static String getMonthName(int month)
