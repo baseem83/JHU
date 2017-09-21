@@ -16,12 +16,9 @@ public class TemperatureConversion
         while( userChoice != 3 )
         {
             userChoice = mainMenu();  //Present user with options and record selection
-            ProcessEntry(userChoice); //Select the appropriate conversion based on selection
+            processEntry(userChoice); //Select the appropriate conversion based on selection
         }
     }
-    
-    //*******************************************************************************************
-    //REGION: INPUT METHODS. Methods that control user input
      
     /**
         * This method outputs the main menu to the screen
@@ -52,7 +49,7 @@ public class TemperatureConversion
         *
         * @author: Baseem Astiphan
     */        
-    static float GetFahreinheit()
+    static float getFahreinheit()
     {
         Scanner input = new Scanner(System.in);
         System.out.print( "Enter a Fahrenheit temperature: " );
@@ -70,19 +67,13 @@ public class TemperatureConversion
         *
         * @author: Baseem Astiphan
     */            
-    static float GetCelsius()
+    static float getCelsius()
     {
         Scanner input = new Scanner(System.in);
         System.out.print( "Enter a Celsius temperature: " );
         return input.nextFloat();
     }
-    
-    //END REGION INPUT METHODS
-        
-    //*******************************************************************************************
-    //REGION: OUTPUT METHODS. Methods that output control output of information
-    
-    
+      
      /**
         * This method handles workflow based on user selection
         * 
@@ -92,7 +83,7 @@ public class TemperatureConversion
         *
         * @author: Baseem Astiphan
     */
-    static void ProcessEntry(int userSelection)
+    static void processEntry(int userSelection)
     {
         float temperatureFahrenheit = 0;              // Fahrenheit temperature
         float temperatureCelsius = 0;                 // Celsius temperature
@@ -100,7 +91,7 @@ public class TemperatureConversion
         switch( userSelection )
         {
             case 1:     // Convert Fahrenheit to Celsius
-                temperatureFahrenheit = GetFahreinheit(); // User input Fahrenheit val
+                temperatureFahrenheit = getFahreinheit(); // User input Fahrenheit val
                 
                 //Convert Fahrenheit value to Celsius
                 temperatureCelsius = convertFToC(temperatureFahrenheit); 
@@ -109,20 +100,14 @@ public class TemperatureConversion
                 outputFToC(temperatureFahrenheit, temperatureCelsius);
                 break;
             case 2:     // Convert Celsius to Fahrenheit
-                temperatureCelsius = GetCelsius(); //user input Celsius value
+                temperatureCelsius = getCelsius(); //user input Celsius value
                 
                 
-                /*
-                    Below converts the celsius temperature and outputs to screen
-                    in a single line
-                */
+                
+                //Below converts the celsius temperature and outputs to screen
+                //in a single line
                 outputCToF(temperatureCelsius, convertCToF(temperatureCelsius));
-                
-                // //Convert Ceslius value to Fahrenheit
-                // temperatureFahrenheit = convertCToF(temperatureCelsius);
-                
-                // //Display result to user
-                // outputCToF(temperatureCelsius, temperatureFahrenheit);
+               
                 break;
             case 3:     // End Program
                 adios();  //Display quit message to user
@@ -131,7 +116,6 @@ public class TemperatureConversion
                 invalidEntry();  //Display invalid entry message to user
         }
     }
-    
     
     /**
         * This method converts a fahrenheit value into celsius.
@@ -197,13 +181,6 @@ public class TemperatureConversion
     {
         System.out.println("Bye Bye");
     }
-    //END OUTPUT METHODS
-    
-    //*******************************************************************************************
-    /*
-        REGION: CONVERSION METHODS. This code section contains all methods that 
-        convert data from one format to another
-    */
     
     /**
         * This method converts a fahrenheit value into celsius.
@@ -238,11 +215,6 @@ public class TemperatureConversion
     {
         return 9F/5F * celsius + 32F;
     }
-    
-    /*
-        END CONVERSION METHODS
-    */
-    
 }
 
 
