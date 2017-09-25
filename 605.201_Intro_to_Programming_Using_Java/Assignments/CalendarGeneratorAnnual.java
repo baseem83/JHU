@@ -18,10 +18,12 @@ public class CalendarGeneratorAnnual
     {
         int year;   //calendar year (4 digits)
         
-        Scanner input = new Scanner (System.in);
+        Scanner input = new Scanner (System.in); //scanner for user input
 
-        System.out.print("\nPlease enter a calendar month (4 digits, e.g. 2017): ");
-        year = input.nextInt(); //get user input for year
+        //Get calendar year. For the sake of the assignment, we allow years
+        //between 0 and 9999. May need to be refined based on conversations
+        //with the project owner
+        year = getInteger("\nPlease enter a calendar year (4 digits, e.g. 2017)", input, 0, 9999);
         
         System.out.println();  //blank line for formatting
         
@@ -360,6 +362,9 @@ public class CalendarGeneratorAnnual
         }
     }
     
+    /////////////////////////////////////////
+    ///// REGION: HELPER METHODS
+    /////////////////////////////////////////
     /**
         * This helper method returns a String value with leading spaces
         * to total a desired length. This feature is useful for formatting
@@ -388,5 +393,51 @@ public class CalendarGeneratorAnnual
             return new String(new char[desiredLength - text.length()]).replace('\0',' ') + text;
         }
     }
-}
 
+    /**
+        * This helper method returns an integer value based on user input.
+        * The method takes a user output message, an instantized Scanner object,
+        * a lower bounded value, and an upper bounded value.
+        *
+        * return int: the validated user input
+        *
+        * @author Baseem Astiphan
+        * @version 1.0.0.0
+        * @param message        the text to be displayed to user
+        * @param input          instantized Scanner object
+        * @param lowBound       the minimum accepted user input
+        * @param upperBound     the maximum accepted user input
+        
+        *
+    */
+    public static int getInteger(String message, Scanner input, int lowBound, int upperBound)
+    {
+        boolean inputError = false; // maintain error state
+        int output = 0; //output to be retured
+        
+        do
+        {
+            System.out.print(message + ": "); //display output message to user
+            
+            //Check if the user input is NOT an integer compatible type
+            inputError = !input.hasNextInt();
+            if (inputError)  //error
+            {
+                input.next();   //flush out the scanner
+            }
+            else 
+            {
+                output = input.nextInt(); //get next input
+                
+                //Confirm entry is between lower and upper bound
+                if (output < lowBound || output > upperBound)
+                {
+                    inputError = true; //error, outside of bounds
+                }
+            }
+        }
+        while (inputError); //retry if not an integer
+        
+        return output; //return the user entry
+    }
+}
