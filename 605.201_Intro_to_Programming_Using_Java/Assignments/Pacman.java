@@ -25,7 +25,7 @@ public class Pacman
     //found using grid[x].length, but this makes it more accessible
     private static int[] gridDimensions = new int[2];
     
-    private static final double COOKIE_THRESHOLD = 0.15151515;
+    private static final double COOKIE_THRESHOLD = 0.15;
     
     
     private static int cookieCount = 0;
