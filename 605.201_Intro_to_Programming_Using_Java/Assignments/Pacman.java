@@ -25,12 +25,17 @@ public class Pacman
     //found using grid[x].length, but this makes it more accessible
     private static int[] gridDimensions = new int[2];
     
+    //Percentage of board that should include includes
     private static final double COOKIE_THRESHOLD = 0.15;
     
-    
+    //Total number of cookies on board. Grid size * COOKIE_THRESHOLD
     private static int cookieCount = 0;
     
+    //Total number of cookies that pacman has already eaten
+    private static int cookiesEaten = 0;
     
+    //Total number of moves pacman has made
+    private static int totalMoves = 0;
     
     public static void main(String [] args)
     {
@@ -49,8 +54,9 @@ public class Pacman
         
         //Y-dim of grid. Limit height of grid to 100 cells for the sake of this
         //assignment. Otherwise, no restriction needs to be placed on height.
-        gridDimensions[1] = getInteger("Y-axis: ", input, 0, 80, "Must be int between 1 and 100");
+        gridDimensions[1] = getInteger("Y-axis: ", input, 0, 100, "Must be int between 1 and 100");
         
+        //Round down the number of cells in grid multiplied by cookie percentage
         cookieCount = (int)(gridDimensions[0] * gridDimensions[1] * COOKIE_THRESHOLD);
         
         //Instantiate the 2D char grid to contain the pacman playing board
@@ -169,10 +175,21 @@ public class Pacman
                 break;
         }
         
+        if (grid[location[0]][location[1]] == 'O')
+        {
+            eatCookie();
+        }
+        
         System.out.println("0: " + location[0] + " 1: " + location[1]);
         
         generatePacman();
         paintBoard();
+    }
+    
+    public static void eatCookie()
+    {
+        System.out.println("You ate a delicious cookie. That was number " + ++cookiesEaten);
+        
     }
     
     public static void generatePacman()
@@ -200,8 +217,9 @@ public class Pacman
                 {
                     //grid[j][i] = fillCharacter('.', 'O', COOKIE_THRESHOLD);
                     
-                    fill = fillCharacter('.', 'O', (gridDimensions[0] * gridDimensions[1] - (i * gridDimensions[0] + j)), cookieCount - cookieCounter);
-                    // System.out.print(" " + (gridDimensions[0] * gridDimensions[1] - (i * gridDimensions[0] + j)));
+                    fill = fillCharacter('.', 'O', 
+                           (gridDimensions[0] * gridDimensions[1] - (i * gridDimensions[0] + j)),
+                           cookieCount - cookieCounter);
                     if (fill == 'O')
                     {
                         cookieCounter++;
@@ -215,16 +233,10 @@ public class Pacman
 
     private static char fillCharacter(char standard, char random, int remSpaces, int remCookies)
     {
-        System.out.println("RemCookies: " + remCookies + " RemSpaces: " + remSpaces);
         double threshold = (double)remCookies / (double)remSpaces;
-        System.out.println("Thresh: " + threshold);
         return Math.random() <= threshold ? random : standard;
     }
     
-    // private static char fillCharacter(char standard, char random, double threshold)
-    // {
-        // return Math.random() <= threshold ? random : standard;
-    // }
     
     /**
         * This helper method returns an integer value based on user input.
