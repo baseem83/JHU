@@ -1,20 +1,3 @@
-//NOTES: 
-//1. Is it appropriate to call a setter from the constructor
-//    so that all error checking can only exist in one place
-//2. Along same lines, is it appropriate to re-call a setter from
-//     within itself if error checking fails?
-//2a. Is it appropriate to set default values when validation fails?
-//3. Instructions: Classes do not user input/output. How about for error checking/
-//     validation? Normally, I'd throw exceptions, but since we haven't learned them
-//     we are writing System.out.println messages. Should those NOT come from within the 
-//     class?
-//4. Is the HireDate class supposed to behave as a date, or more as a collection of integers (mon, day ,year)
-//5. Should setters return anything or is void OK
-//6. Employee Class contains a number of classes. Should they be initialized in ctor, or only once set?
-//   --> Challenge, if Constructor can take Name object (for example), the object can be created outside
-//   -->    of the Employee class, attached to the employee class, then modified outside of the emp class
-//7. Should main() be called from the Employee class, or should we have a fifth class file?
-
 // RE PACMAN
 // 1. Can he walk through walls and wrap around? Is that our decision?
 // 2. How does the game end? When all cookies are eaten? When all spaces (.) are eaten? Or 
