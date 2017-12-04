@@ -3,11 +3,11 @@ import java.io.IOException;
 import java.util.*;
 import java.io.*;
 
-public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K, T>>
+public abstract class TextFileDataContext<K, T extends Comparable<T> & Persistable<K, T>>
 {   
-    private File dataFile;
-    private TreeMap<K, T> entities = null;
-    private String delimiter;
+    protected File dataFile;
+    protected TreeMap<K, T> entities = null;
+    protected String delimiter;
 
     public TextFileDataContext(String filePath, String delimiter)
     {
@@ -40,14 +40,7 @@ public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K, T>>
         return entities;
     }
 
-    public TreeMap<K, T> refreshEntitiesFromDB()
-    {
-        try(BufferedReader br = new BufferedReader(new FileReader(dataFile)))
-        {
-            T entity = new T();
-            
-        }
-    }
+    public abstract TreeMap<K, T> refreshEntitiesFromDB();
     
     public void addEntity(T entity)
         throws Exception
@@ -148,64 +141,52 @@ public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K, T>>
         for (Map.Entry s : getEntities().entrySet())
             System.out.println("Type: " + s.getValue().getClass().getSimpleName());
     }
-
-
-
-    
-    
-    
-    //Below should be removed when live. We don't want to return a reference to the actual file
-    // public File getDataFile()
-    // {
-        // return dataFile;
-    // }
-    
     
     public static void main(String[] args)
     {
-        TextFileDataContext<String, Song> d = new TextFileDataContext<String, Song>("testFile2.data", "|");
+        // TextFileDataContext<String, Song> d = new TextFileDataContext<String, Song>("testFile2.data", "|");
         
-        // System.out.println("File is: " + d.getDataFile().getAbsolutePath());
-        System.out.println("\nExists: " + d.exists());
-        try
-        {
-            System.out.println("\nNew File: " + d.createNewDataFile());
-        }
-        catch (Exception ex)
-        {
-            System.out.println(ex);
-        }
+        // // System.out.println("File is: " + d.getDataFile().getAbsolutePath());
+        // System.out.println("\nExists: " + d.exists());
+        // try
+        // {
+            // System.out.println("\nNew File: " + d.createNewDataFile());
+        // }
+        // catch (Exception ex)
+        // {
+            // System.out.println(ex);
+        // }
         
-        System.out.println("\nExists: " + d.exists());
+        // System.out.println("\nExists: " + d.exists());
         
-        Song song = new Song("Song 1", "S01", "Just a good first song", "Baseem Astiphan", "Songs", 9.99);
+        // Song song = new Song("Song 1", "S01", "Just a good first song", "Baseem Astiphan", "Songs", 9.99);
         
-        d.addEntityToCollection(song);
+        // d.addEntityToCollection(song);
         
-        for (Map.Entry s : d.getEntities().entrySet())
-        {
-            System.out.print("KEY: " + s.getKey());
-            System.out.println("VAL: " + s.getValue());
-        }
+        // for (Map.Entry s : d.getEntities().entrySet())
+        // {
+            // System.out.print("KEY: " + s.getKey());
+            // System.out.println("VAL: " + s.getValue());
+        // }
         
-        d.addEntityToTextFile(song);
+        // d.addEntityToTextFile(song);
 
-        d.deleteEntityFromCollection(song);
+        // d.deleteEntityFromCollection(song);
         
-        d.deleteEntityFromTextFile(song);
+        // d.deleteEntityFromTextFile(song);
 
-        System.out.println("After del");
-        for (Map.Entry s : d.getEntities().entrySet())
-        {
-            System.out.print("KEY: " + s.getKey());
-            System.out.println("VAL: " + s.getValue());
-        }
+        // System.out.println("After del");
+        // for (Map.Entry s : d.getEntities().entrySet())
+        // {
+            // System.out.print("KEY: " + s.getKey());
+            // System.out.println("VAL: " + s.getValue());
+        // }
 
-        System.out.println(d.isEmpty());
+        // System.out.println(d.isEmpty());
 
-        // TextFileDataContext<Song> s = new TextFileDataContext<Song>();
-        // s.entity = song;
+        // // TextFileDataContext<Song> s = new TextFileDataContext<Song>();
+        // // s.entity = song;
         
-        // System.out.println(s.entity.toString());
+        // // System.out.println(s.entity.toString());
     }
 }
