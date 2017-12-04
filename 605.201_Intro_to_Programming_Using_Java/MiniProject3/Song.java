@@ -105,8 +105,7 @@ public class Song implements Comparable<Song>, Persistable<String, Song>
     @Override 
     public Song readFromDBToObject(String dbLine, String delimeter)
     {
-        Song temp = Song.parseSong(dbLine, delimeter);
-        song = temp;
+        return Song.parseSong(dbLine, delimeter);
     }
     
     public static Song parseSong(String line, String delimeter)
