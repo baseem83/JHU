@@ -1,3 +1,5 @@
+// ADD AN EDIT OPTION (OR INCLUDE IT IN THE ADDENTITY CODE, SINCE THAT MANAGES CHANGES AS WELL)
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -98,6 +100,23 @@ public abstract class TextFileDataContext<K, T extends Comparable<T> & Persistab
         return output;
     }
 
+    public void deleteEntity(T entity)
+        throws Exception
+    {
+        if (!deleteEntityFromCollection(entity))
+        {
+            throw new Exception("Error adding new item");
+        }
+
+        if (!deleteEntityFromTextFile(entity))
+        {
+            //Maintain atomicity-- remove item from collection
+            //if it failed to add to database
+            getEntities().put(entity.getKeyField(), entity);
+            throw new Exception("Error persisting item");
+        }
+    }
+    
     private boolean deleteEntityFromCollection(T entity)
     {
         boolean output = true;

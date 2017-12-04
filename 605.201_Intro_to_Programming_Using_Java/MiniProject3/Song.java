@@ -1,3 +1,5 @@
+import java.util.regex.Pattern;
+
 public class Song implements Comparable<Song>, Persistable<String, Song>
 {
     private String title;
@@ -88,7 +90,7 @@ public class Song implements Comparable<Song>, Persistable<String, Song>
     @Override
     public String getKeyField()
     {
-        return getTitle();
+        return getItemCode();
     }
     
     @Override
@@ -105,19 +107,28 @@ public class Song implements Comparable<Song>, Persistable<String, Song>
     @Override 
     public Song readFromDBToObject(String dbLine, String delimeter)
     {
-        return Song.parseSong(dbLine, delimeter);
+        Song temp = Song.parseSong(dbLine, delimeter);
+        
+        setTitle(temp.getTitle());
+        setItemCode(temp.getItemCode());
+        setDescription(temp.getDescription());
+        setArtist(temp.getArtist());
+        setAlbum(temp.getAlbum());
+        setPrice(temp.getPrice());
+        
+        return this;
     }
     
     public static Song parseSong(String line, String delimeter)
     {
         Song song = new Song();
-        String[] elements = line.split(delimeter);
+        String[] elements = line.split(Pattern.quote(delimeter));
         
         //Maybe this can be an exception of something. Now it just returns empty new song
         //maybe this is actually OK
         if (elements.length != 6)
         {
-            System.out.println("Incorrect number of arguments!");
+            System.out.println("Incorrect number of elements!");
             return song;
         }
         
