@@ -3,15 +3,16 @@ import java.io.IOException;
 import java.util.*;
 import java.io.*;
 
-public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K>>
+public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K, T>>
 {   
     private File dataFile;
     private TreeMap<K, T> entities = null;
+    private String delimiter;
 
- 
-    public TextFileDataContext(String filePath)
+    public TextFileDataContext(String filePath, String delimiter)
     {
         dataFile = new File(filePath);
+        this.delimiter = delimiter;
     }
     
     public boolean exists()
@@ -19,6 +20,11 @@ public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K>>
         return (dataFile.exists() || dataFile.isFile());
     }
     
+    public boolean isEmpty()
+    {
+        return getEntities().size() == 0 ? true : false;
+    }
+
     public boolean createNewDataFile() throws IOException
     {
         return dataFile.createNewFile();
@@ -33,8 +39,35 @@ public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K>>
         
         return entities;
     }
+
+    public TreeMap<K, T> refreshEntitiesFromDB()
+    {
+        try(BufferedReader br = new BufferedReader(new FileReader(dataFile)))
+        {
+            T entity = new T();
+            
+        }
+    }
     
-    public boolean addEntityToCollection(T entity)
+    public void addEntity(T entity)
+        throws Exception
+    {
+
+        if (!addEntityToCollection(entity))
+        {
+            throw new Exception("Error adding new item");
+        }
+
+        if (!addEntityToTextFile(entity))
+        {
+            //Maintain atomicity-- remove item from collection
+            //if it failed to add to database
+            entities.remove(entity.getKeyField());
+            throw new Exception("Error persisting item");
+        }
+    }
+
+    private boolean addEntityToCollection(T entity)
     {
         boolean output = true;
         
@@ -50,7 +83,7 @@ public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K>>
         return output;
     }
     
-    public boolean addEntityToTextFile(T entity)
+    private boolean addEntityToTextFile(T entity)
     {
         boolean output = true;
         
@@ -60,7 +93,7 @@ public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K>>
             {
                 bw.newLine();
             }
-            bw.write(entity.writeToDatabase());
+            bw.write(entity.writeToDatabase(delimiter));
             
         }
         catch (Exception ex)
@@ -71,6 +104,53 @@ public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K>>
         
         return output;
     }
+
+    private boolean deleteEntityFromCollection(T entity)
+    {
+        boolean output = true;
+
+        try
+        {
+            getEntities().remove(entity.getKeyField());
+        }
+        catch (Exception ex)
+        {
+            output = false;
+        }
+
+        return output;
+    }
+
+    private boolean deleteEntityFromTextFile(T entity)
+    {
+        boolean output = true;
+
+        try
+        {
+            dataFile.delete();
+            createNewDataFile();
+
+            for (Map.Entry<K, T> ent : getEntities().entrySet())
+            {
+                addEntityToTextFile(ent.getValue());
+            }
+        }
+        catch (Exception ex)
+        {
+            output = false;
+        }
+
+        return output;
+    }
+
+    private void Test()
+    {
+        for (Map.Entry s : getEntities().entrySet())
+            System.out.println("Type: " + s.getValue().getClass().getSimpleName());
+    }
+
+
+
     
     
     
@@ -83,7 +163,7 @@ public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K>>
     
     public static void main(String[] args)
     {
-        TextFileDataContext<String, Song> d = new TextFileDataContext<String, Song>("testFile2.data");
+        TextFileDataContext<String, Song> d = new TextFileDataContext<String, Song>("testFile2.data", "|");
         
         // System.out.println("File is: " + d.getDataFile().getAbsolutePath());
         System.out.println("\nExists: " + d.exists());
@@ -109,7 +189,20 @@ public class TextFileDataContext<K, T extends Comparable<T> & Persistable<K>>
         }
         
         d.addEntityToTextFile(song);
+
+        d.deleteEntityFromCollection(song);
         
+        d.deleteEntityFromTextFile(song);
+
+        System.out.println("After del");
+        for (Map.Entry s : d.getEntities().entrySet())
+        {
+            System.out.print("KEY: " + s.getKey());
+            System.out.println("VAL: " + s.getValue());
+        }
+
+        System.out.println(d.isEmpty());
+
         // TextFileDataContext<Song> s = new TextFileDataContext<Song>();
         // s.entity = song;
         

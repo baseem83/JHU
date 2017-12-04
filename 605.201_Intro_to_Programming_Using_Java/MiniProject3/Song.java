@@ -1,4 +1,4 @@
-public class Song implements Comparable<Song>, Persistable<String>
+public class Song implements Comparable<Song>, Persistable<String, Song>
 {
     private String title;
     private String itemCode;
@@ -92,14 +92,21 @@ public class Song implements Comparable<Song>, Persistable<String>
     }
     
     @Override
-    public String writeToDatabase()
+    public String writeToDatabase(String delimeter)
     {
-        return getTitle() + "," +
-               getItemCode() + "," +
-               getDescription() + "," +
-               getArtist() + "," +
-               getAlbum() + "," +
+        return getTitle()       + delimeter +
+               getItemCode()    + delimeter +
+               getDescription() + delimeter +
+               getArtist()      + delimeter +
+               getAlbum()       + delimeter +
                Double.toString(getPrice());
+    }
+
+    @Override 
+    public Song readFromDBToObject(String dbLine, String delimeter)
+    {
+        Song temp = Song.parseSong(dbLine, delimeter);
+        song = temp;
     }
     
     public static Song parseSong(String line, String delimeter)
@@ -111,7 +118,7 @@ public class Song implements Comparable<Song>, Persistable<String>
         //maybe this is actually OK
         if (elements.length != 6)
         {
-            System.out.println("No enough arguments!");
+            System.out.println("Incorrect number of arguments!");
             return song;
         }
         
