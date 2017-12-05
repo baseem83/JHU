@@ -1,6 +1,6 @@
 import java.util.regex.Pattern;
 
-public class Song implements Comparable<Song>, Persistable<String, Song>
+public class Song //implements Comparable<Song>, Persistable<String, Song>
 {
     private String title;
     private String itemCode;
@@ -81,43 +81,45 @@ public class Song implements Comparable<Song>, Persistable<String, Song>
         this.price = price;
     }
     
-    @Override
-    public int compareTo(Song s2)
-    {
-        return this.getTitle().compareTo(s2.getTitle());
-    }
+    // @Override
+    // public int compareTo(Song s2)
+    // {
+        // String thisSong = this.getTitle() + "-" + this.getItemCode();
+        // String otherSong = s2.getTitle() + "-" + this.getItemCode();
+        // return thisSong.compareTo(otherSong);
+    // }
     
-    @Override
-    public String getKeyField()
-    {
-        return getItemCode();
-    }
+    // @Override
+    // public String getKeyField()
+    // {
+        // return getTitle() + "-" + getItemCode();
+    // }
     
-    @Override
-    public String writeToDatabase(String delimeter)
-    {
-        return getTitle()       + delimeter +
-               getItemCode()    + delimeter +
-               getDescription() + delimeter +
-               getArtist()      + delimeter +
-               getAlbum()       + delimeter +
-               Double.toString(getPrice());
-    }
+    // @Override
+    // public String writeToDatabase(String delimeter)
+    // {
+        // return getTitle()       + delimeter +
+               // getItemCode()    + delimeter +
+               // getDescription() + delimeter +
+               // getArtist()      + delimeter +
+               // getAlbum()       + delimeter +
+               // Double.toString(getPrice());
+    // }
 
-    @Override 
-    public Song readFromDBToObject(String dbLine, String delimeter)
-    {
-        Song temp = Song.parseSong(dbLine, delimeter);
+    // @Override 
+    // public Song readFromDBToObject(String dbLine, String delimeter)
+    // {
+        // Song temp = Song.parseSong(dbLine, delimeter);
         
-        setTitle(temp.getTitle());
-        setItemCode(temp.getItemCode());
-        setDescription(temp.getDescription());
-        setArtist(temp.getArtist());
-        setAlbum(temp.getAlbum());
-        setPrice(temp.getPrice());
+        // setTitle(temp.getTitle());
+        // setItemCode(temp.getItemCode());
+        // setDescription(temp.getDescription());
+        // setArtist(temp.getArtist());
+        // setAlbum(temp.getAlbum());
+        // setPrice(temp.getPrice());
         
-        return this;
-    }
+        // return this;
+    // }
     
     public static Song parseSong(String line, String delimeter)
     {

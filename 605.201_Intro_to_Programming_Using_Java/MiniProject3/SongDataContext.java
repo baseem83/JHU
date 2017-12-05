@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class SongDataContext extends TextFileDataContext<String, Song>
+public class SongDataContext extends TextFileDataContext<String, SongForDB>
 {   
     public SongDataContext(String filePath, String delimiter)
     {
@@ -9,16 +9,16 @@ public class SongDataContext extends TextFileDataContext<String, Song>
         refreshEntitiesFromDB();
     }
     
-    public TreeMap<String, Song> refreshEntitiesFromDB()
+    public TreeMap<String, SongForDB> refreshEntitiesFromDB()
     {
         String str;
-        Song song;
+        SongForDB song;
         
         try(BufferedReader br = new BufferedReader(new FileReader(dataFile)))
         {
             while((str = br.readLine()) != null)
             {
-                song = new Song();
+                song = new SongForDB();
                 song = song.readFromDBToObject(str, delimiter);
                 getEntities().put(song.getKeyField(), song);
             }
@@ -49,13 +49,17 @@ public class SongDataContext extends TextFileDataContext<String, Song>
         {
             System.out.println("\nExists: " + d.exists());
             
-            Song song  = new Song("Song 5", "S01", "Just a good first song", "Baseem Astiphan", "Songs", 9.99);            
-            Song song2 = new Song("Song 3", "S10", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
-            Song song3 = new Song("Song 7", "S22", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
-            Song song4 = new Song("Song 9", "S17", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
-            Song song5 = new Song("Song 1", "S11", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
-            Song song6 = new Song("Song 6", "S04", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
-            Song song7 = new Song("Song 3", "S16", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
+            System.out.println("Im here");
+            SongForDB song  = new SongForDB("Song 5", "S01", "Just a good first song", "Baseem Astiphan", "Songs", 9.99);      
+
+            System.out.println("Im here");
+            
+            SongForDB song2 = new SongForDB("Song 3", "S10", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
+            SongForDB song3 = new SongForDB("Song 7", "S22", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
+            SongForDB song4 = new SongForDB("Song 9", "S17", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
+            SongForDB song5 = new SongForDB("Song 1", "S11", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
+            SongForDB song6 = new SongForDB("Song 6", "S04", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
+            SongForDB song7 = new SongForDB("Song 3", "S09", "Just a good second song", "Baseem Astiphan", "Songs2", 6.99);
 
             d.addEntity(song);
             d.addEntity(song2);
@@ -100,14 +104,6 @@ public class SongDataContext extends TextFileDataContext<String, Song>
         {
             System.out.println(ex);
         }
-        
-        
-        
-        System.out.println(d.isEmpty());
 
-        // TextFileDataContext<Song> s = new TextFileDataContext<Song>();
-        // s.entity = song;
-        
-        // System.out.println(s.entity.toString());
     }
 }
