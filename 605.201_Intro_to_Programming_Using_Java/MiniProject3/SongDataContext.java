@@ -32,20 +32,7 @@ public class SongDataContext extends TextFileDataContext<String, Song>
     
     public static void main(String[] args)
     {
-        SongDataContext d = new SongDataContext("testFile3.data", ",");
-        // System.out.println(d.exists());
-        // System.out.println(d.isEmpty());
-        
-        // try
-        // {
-            // System.out.println(d.createNewDataFile());
-        // }
-        // catch (Exception ex)
-        // {
-            // System.out.println(ex);
-        // }
-        
-        // System.out.println("File is: " + d.getDataFile().getAbsolutePath());
+        SongDataContext d = new SongDataContext("testFile3.data", "|");
         
         
         System.out.println("\nExists: " + d.exists());
@@ -81,12 +68,22 @@ public class SongDataContext extends TextFileDataContext<String, Song>
             
             System.out.println("Checkpoint");
             d.refreshEntitiesFromDB();
+            System.out.println("Checkpoint2");
             
             for (Map.Entry s : d.getEntities().entrySet())
             {
                 System.out.print("KEY: " + s.getKey());
                 System.out.println("VAL: " + s.getValue());
             }
+
+            d.deleteEntity(song4);
+
+            song2.setTitle("Song 2");
+            song2.setDescription("Just a really, really good second song");
+            d.editEntity(song2);
+
+            // System.out.println("No force: " + d.createNewDataFile());
+            // System.out.println("Force: " + d.createNewDataFile(true));
 
 
             // d.deleteEntity(song);

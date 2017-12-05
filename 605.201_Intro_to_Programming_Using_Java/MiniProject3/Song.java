@@ -129,6 +129,7 @@ public class Song implements Comparable<Song>, Persistable<String, Song>
         if (elements.length != 6)
         {
             System.out.println("Incorrect number of elements!");
+            System.out.println(line + " " + delimeter + " " + elements.length);
             return song;
         }
         

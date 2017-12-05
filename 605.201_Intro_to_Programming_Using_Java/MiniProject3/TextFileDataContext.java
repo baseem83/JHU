@@ -1,4 +1,7 @@
 // ADD AN EDIT OPTION (OR INCLUDE IT IN THE ADDENTITY CODE, SINCE THAT MANAGES CHANGES AS WELL)
+//Make ITEM CODE Final
+//Need to cleanse persistence or 'sql injection'. Don't allow delimeter within fields, if not imple
+//include in design document as a 'should have'
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +34,15 @@ public abstract class TextFileDataContext<K, T extends Comparable<T> & Persistab
     {
         return dataFile.createNewFile();
     }
+
+    public boolean createNewDataFile(boolean overwrite) throws IOException
+    {
+        if (overwrite && exists())
+        {
+            dataFile.delete();
+        }
+        return createNewDataFile();
+    }
     
     public TreeMap<K, T> getEntities()
     {
@@ -57,7 +69,7 @@ public abstract class TextFileDataContext<K, T extends Comparable<T> & Persistab
         {
             //Maintain atomicity-- remove item from collection
             //if it failed to add to database
-            entities.remove(entity.getKeyField());
+            getEntities().remove(entity.getKeyField());
             throw new Exception("Error persisting item");
         }
     }
@@ -100,6 +112,44 @@ public abstract class TextFileDataContext<K, T extends Comparable<T> & Persistab
         return output;
     }
 
+
+    public void editEntity(T entity)
+        throws Exception
+    {
+        T oldEntity = null;
+
+        if (getEntities().containsKey(entity.getKeyField()))
+        {
+            oldEntity = getEntities().get(entity.getKeyField());
+        }
+
+        if (!editEntityInCollection(entity))
+        {
+            throw new Exception("Error adding new item");
+        }
+
+        if (!editEntityInTextFile(entity))
+        {
+            //Maintain atomicity-- remove item from collection
+            //if it failed to add to database
+            if (oldEntity != null)
+            {
+                getEntities().put(entity.getKeyField(), oldEntity);
+            }
+            throw new Exception("Error persisting item");
+        }
+    }
+
+    private boolean editEntityInCollection(T entity)
+    {
+        return addEntityToCollection(entity);
+    }
+
+    private boolean editEntityInTextFile(T entity)
+    {
+        return deleteEntityFromTextFile(entity);
+    }
+
     public void deleteEntity(T entity)
         throws Exception
     {
@@ -139,8 +189,7 @@ public abstract class TextFileDataContext<K, T extends Comparable<T> & Persistab
 
         try
         {
-            dataFile.delete();
-            createNewDataFile();
+            createNewDataFile(true);
 
             for (Map.Entry<K, T> ent : getEntities().entrySet())
             {
