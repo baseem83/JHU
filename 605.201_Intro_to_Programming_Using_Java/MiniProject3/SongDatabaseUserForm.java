@@ -5,6 +5,11 @@ import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.geometry.*;
 import javafx.collections.*;
+import java.io.*;
+import java.util.Scanner;
+import javafx.event.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 public class SongDatabaseUserForm extends Application
 {
@@ -25,14 +30,50 @@ public class SongDatabaseUserForm extends Application
 
     private Status formStatus;
 
+    private SongForDB[] songArray;
+    private SongForDB selectedSong;
+    private SongForDB placeholderSong;
+    private int selectedSongIndex;
+
     @Override
     public void start(Stage primaryStage)
     {
-        primaryStage.setTitle("Songs Libaray");
-        // FlowPane rootNode = new FlowPane(Orientation.VERTICAL, 5, 5);
-        // rootNode.setAlignment(Pos.TOP_CENTER);
+        String fileEntry;
+        Scanner input = new Scanner(System.in);
 
-        System.out.println(this.getParameters().getUnnamed().get(0));
+        if (this.getParameters().getUnnamed().size() == 0)
+        {
+            System.out.println("Please enter a database name");
+            return;
+        }
+
+        fileEntry = this.getParameters().getUnnamed().get(0).trim();
+        dataContext = 
+            new SongDataContext(fileEntry, "|");
+
+        if (!dataContext.exists())
+        {
+            System.out.println(fileEntry + " does not exist. Would you like to " +
+                    "create it? [y/n]");
+
+            if (input.nextLine().toLowerCase().equals("y"))
+            {
+                try
+                {
+                    dataContext.createNewDataFile();
+                }
+                catch(Exception ex)
+                {
+                    System.out.println(ex);
+                }
+            }       
+            else
+            {
+                return;
+            }
+        }
+
+        primaryStage.setTitle("Songs Libaray");
 
         GridPane entryGrid = new GridPane();
         // entryGrid.setPrefSize(300, 450);
@@ -112,6 +153,74 @@ public class SongDatabaseUserForm extends Application
         cancelButton.setPrefWidth(70);
         exitButton.setPrefWidth(70);
 
+        addButton.setOnAction(new EventHandler<ActionEvent>()
+        {
+            public void handle(ActionEvent ae)
+            {
+                setStatus(Status.ADD);
+            }
+        });
+
+        editButton.setOnAction(new EventHandler<ActionEvent>()
+        {
+            public void handle(ActionEvent ae)
+            {
+                setStatus(Status.EDIT);
+            }
+        });
+
+        deleteButton.setOnAction(new EventHandler<ActionEvent>()
+        {
+            public void handle(ActionEvent ae)
+            {
+                setStatus(Status.DELETE);
+            }
+        });
+
+        acceptButton.setOnAction(new EventHandler<ActionEvent>()
+        {
+            public void handle(ActionEvent ae)
+            {
+                try
+                {
+                    acceptChanges();
+                }
+                catch (Exception ex)
+                {
+                    System.out.println(ex);
+                }
+            }
+        });
+
+        cancelButton.setOnAction(new EventHandler<ActionEvent>()
+        {
+            public void handle(ActionEvent ae)
+            {
+                if (formStatus == Status.ADD)
+                {
+                    selectedSong = placeholderSong;
+                    placeholderSong = null;
+                }
+                setStatus(Status.VIEW);
+            }
+        });
+
+
+        songCombo.getSelectionModel().selectedIndexProperty().addListener(
+            new ChangeListener<Number>()
+            {
+                public void changed(ObservableValue<? extends Number> change, 
+                    Number oldVal, Number newVal)
+                {
+                    if (newVal.intValue() != -1)
+                    {
+                        selectedSongIndex = newVal.intValue();
+                        selectedSong = songArray[selectedSongIndex];
+                        refreshLayout();
+                    }
+                }
+            });
+
         buttonPane.getChildren().addAll(addButton, editButton,
                                         deleteButton, acceptButton,
                                         cancelButton, exitButton);
@@ -125,10 +234,110 @@ public class SongDatabaseUserForm extends Application
 
         Scene songScene = new Scene(entryGrid, 500, 350);
 
+
+        loadComboBox();
         setStatus(Status.VIEW);
 
         primaryStage.setScene(songScene);
         primaryStage.show();
+    }
+
+    private void loadComboBox()
+    {
+        refreshSongArray();
+
+        if (songArray.length == 0)
+        {
+            return;
+        }
+
+        if (selectedSong == null)
+        {
+            selectedSong = songArray[0];
+        }
+
+        songCombo.getItems().clear();
+
+        for(SongForDB s : songArray)
+        {
+            songCombo.getItems().add(s.getTitle());
+        }
+
+        // songCombo.setValue(songArray[0].getTitle());
+        // selectedSong = songArray[0];
+        // refreshLayout();
+    }
+
+    private void refreshLayout()
+    {
+        if (selectedSong == null)
+        {
+            songCombo.setPromptText("No Selected Item");
+            itemCodeText.setText("");
+            descText.setText("");
+            artistText.setText("");
+            albumText.setText("");
+            priceText.setText("");
+        }
+        else
+        {
+            songCombo.setValue(selectedSong.getTitle());
+            itemCodeText.setText(selectedSong.getItemCode());
+            descText.setText(selectedSong.getDescription());
+            artistText.setText(selectedSong.getArtist());
+            albumText.setText(selectedSong.getAlbum());
+            priceText.setText(Double.toString(selectedSong.getPrice()));
+        }
+
+        // Song song = songArray[index];
+        // itemCodeText.setText(song.getItemCode());
+        // descText.setText(song.getDescription());
+        // artistText.setText(song.getArtist());
+        // albumText.setText(song.getAlbum());
+        // priceText.setText(Double.toString(song.getPrice()));
+    }
+
+    private void acceptChanges()
+        throws Exception
+    {
+        SongForDB song;
+
+        switch(formStatus)
+        {
+            case ADD:
+                song = generateSongFromFields();
+                dataContext.addEntity(song);
+                selectedSong = song;
+                loadComboBox();
+                setStatus(Status.VIEW);
+                break;
+            case EDIT:
+                song = generateSongFromFields();
+                dataContext.editEntity(song);
+                loadComboBox();
+                setStatus(Status.VIEW);
+                break;
+            case DELETE:
+                dataContext.deleteEntity(selectedSong);
+                selectedSong = null;
+                loadComboBox();
+                setStatus(Status.VIEW);
+                break;
+        }
+    }
+
+
+    private SongForDB generateSongFromFields()
+    {
+        SongForDB song = new SongForDB();
+        song.setTitle(songCombo.getValue());
+        song.setItemCode(itemCodeText.getText());
+        song.setDescription(descText.getText());
+        song.setArtist(artistText.getText());
+        song.setAlbum(albumText.getText());
+        song.setPrice(Double.parseDouble(priceText.getText()));
+
+        return song;
     }
 
     private void setStatus(Status status)
@@ -137,10 +346,13 @@ public class SongDatabaseUserForm extends Application
         statusLabel.setText("Status: " + formStatus.name());
 
 
-        
+
         switch(status)
         {
             case ADD:
+                placeholderSong = selectedSong;
+                selectedSong = new SongForDB();
+
                 songCombo.setDisable(false);
                 itemCodeText.setDisable(false);
                 descText.setDisable(false);
@@ -148,17 +360,18 @@ public class SongDatabaseUserForm extends Application
                 albumText.setDisable(false);
                 priceText.setDisable(false);
 
-                addButton.setDisable(false);
+                addButton.setDisable(true);
                 editButton.setDisable(true);
                 deleteButton.setDisable(true);
-                acceptButton.setDisable(true);
-                cancelButton.setDisable(true);
-                exitButton.setDisable(false);
+                acceptButton.setDisable(false);
+                cancelButton.setDisable(false);
+                exitButton.setDisable(true);
 
                 songCombo.setEditable(true);
 
                 break;
             case EDIT:
+                songCombo.setEditable(false);
                 songCombo.setDisable(true);
                 itemCodeText.setDisable(true);
                 descText.setDisable(false);
@@ -175,6 +388,7 @@ public class SongDatabaseUserForm extends Application
 
                 break;
             case DELETE:
+                songCombo.setEditable(false);
                 songCombo.setDisable(true);
                 itemCodeText.setDisable(true);
                 descText.setDisable(true);
@@ -191,6 +405,7 @@ public class SongDatabaseUserForm extends Application
 
                 break;
             case VIEW:
+                songCombo.setEditable(false);
                 songCombo.setDisable(false);
                 itemCodeText.setDisable(true);
                 descText.setDisable(true);
@@ -208,6 +423,14 @@ public class SongDatabaseUserForm extends Application
                 break;
 
         }
+
+        refreshSongArray();
+        refreshLayout();
+    }
+
+    private void refreshSongArray()
+    {
+        songArray = dataContext.getEntities().values().toArray(new SongForDB[0]);
     }
 
     public static void main(String [] args)

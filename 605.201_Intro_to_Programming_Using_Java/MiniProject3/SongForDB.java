@@ -100,4 +100,9 @@ public class SongForDB extends Song implements Comparable<SongForDB>, Persistabl
     {
         return !usedItemCodes.contains(itemCode);
     }
+
+    public static void resetItemCodes()
+    {
+        usedItemCodes.clear();
+    }
 }

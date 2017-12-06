@@ -6,7 +6,11 @@ public class SongDataContext extends TextFileDataContext<String, SongForDB>
     public SongDataContext(String filePath, String delimiter)
     {
         super(filePath, delimiter);
-        refreshEntitiesFromDB();
+        
+        if (this.exists())
+        {
+            refreshEntitiesFromDB();
+        }
     }
     
     public TreeMap<String, SongForDB> refreshEntitiesFromDB()
@@ -16,6 +20,7 @@ public class SongDataContext extends TextFileDataContext<String, SongForDB>
         
         try(BufferedReader br = new BufferedReader(new FileReader(dataFile)))
         {
+            SongForDB.resetItemCodes();
             while((str = br.readLine()) != null)
             {
                 song = new SongForDB();
@@ -32,7 +37,7 @@ public class SongDataContext extends TextFileDataContext<String, SongForDB>
     
     public static void main(String[] args)
     {
-        SongDataContext d = new SongDataContext("testFile3.data", "|");
+        SongDataContext d = new SongDataContext("testFile4.data", "|");
         
         
         System.out.println("\nExists: " + d.exists());
