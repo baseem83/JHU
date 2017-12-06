@@ -26,7 +26,7 @@ public class Song
         * @param artist The song artist
         * @param album The song album
         * @param price The price of the song
-        
+        *
     */
     public Song(String title, String itemCode, String description, String artist, String album, double price)
     {

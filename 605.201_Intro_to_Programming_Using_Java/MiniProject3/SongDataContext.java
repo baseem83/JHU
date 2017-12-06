@@ -1,40 +1,77 @@
 import java.util.*;
 import java.io.*;
 
+/**
+    *Class to extend the abstract TextFileDataContext class, implementing
+    *the necessary methods. This class also specifies types for the generics
+    *available in the parent class.
+    *
+    * @author Baseem Astiphan
+    * @version 1.0.0.1
+*/
 public class SongDataContext extends TextFileDataContext<String, SongForDB>
 {   
+    /**
+        *Class constructor
+        *
+        * @author Baseem Astiphan
+        * @param filePath path where file is stored
+        * @param delimiter The delimiter for the data file
+    */
     public SongDataContext(String filePath, String delimiter)
     {
+        //call parent class constructor
         super(filePath, delimiter);
         
+        //If the file already exists, load entities into memory
+        //from the storage file
         if (this.exists())
         {
+            //Load entities
             refreshEntitiesFromDB();
         }
     }
     
+    /**
+        *Method implementation to load entities from filesystem 
+        *storage into the in memory collection
+        *
+        * @author Baseem Astiphan
+        * @return TreeMap in-memory collection of entire database
+    */
     public TreeMap<String, SongForDB> refreshEntitiesFromDB()
     {
-        String str;
-        SongForDB song;
+        String str;  //Holds a line of text
+        SongForDB song; //Holds the song object
         
+        //Try with resources to create a reader for the stoarge file
         try(BufferedReader br = new BufferedReader(new FileReader(dataFile)))
         {
-            SongForDB.resetItemCodes();
+            //Loop through file
             while((str = br.readLine()) != null)
             {
+                //Create a default valued song
                 song = new SongForDB();
+                //Set the song to values from the database
                 song = song.readFromDBToObject(str, delimiter);
+                //place the song in the in-memory collection
                 getEntities().put(song.getKeyField(), song);
             }
         }
         catch (Exception ex)
         {
+            //Write error to standard output
             System.out.println(ex);
         }
+        
+        //return the in-memory collection
         return getEntities();
     }
     
+    //Below main method is just used for testing, and is thus commented out. It can be 
+    //uncommented for running tests.
+    
+    /*
     public static void main(String[] args)
     {
         SongDataContext d = new SongDataContext("testFile4.data", "|");
@@ -111,4 +148,5 @@ public class SongDataContext extends TextFileDataContext<String, SongForDB>
         }
 
     }
+    */
 }

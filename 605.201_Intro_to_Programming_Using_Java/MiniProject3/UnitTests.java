@@ -51,9 +51,9 @@ public class UnitTests
     {
         String line = "Song 1, S01, Just a good first song, Baseem Astiphan, Songs, 9.99";
         
-        SongForDB song = (SongForDB)Song.parseSong(line, ",");
+        SongForDB song = SongForDB.parseSong(line, ",");
         
-        assert (song.writeToDatabase("|").equals("Song 1,S01,Just a good first song,Baseem Astiphan,Songs,9.99")) : "DB Output is incorrect" ;
+        assert (song.writeToDatabase(",").equals("Song 1,S01,Just a good first song,Baseem Astiphan,Songs,9.99")) : "DB Output is incorrect" ;
     }
     
     // private static void createNewFileIfItDoesNotExist()
