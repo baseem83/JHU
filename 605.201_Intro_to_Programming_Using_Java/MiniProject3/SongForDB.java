@@ -8,7 +8,7 @@ import java.util.HashSet;
     * appropriate for a general Song class, considering they are helpers
     * to storage system.
     *
-    * This class also implementes the Comparable<> and Persistable<> intrfaces
+    * This class also implementes the Comparable and Persistable intrfaces
     *
     * @author Baseem Astiphan
     * @version 1.0.0.1
@@ -78,11 +78,11 @@ public class SongForDB extends Song implements Comparable<SongForDB>, Persistabl
     }
     
     /**
-        *Implement method as definied by Comparable<> interface. Compares
+        *Implement method as definied by Comparable interface. Compares
         *current instance of song to another instance.
         *
         * @author Baseem Astiphan
-        * @s2 Another song against which to compare
+        * @param s2 Another song against which to compare
     */
     public int compareTo(SongForDB s2)
     {
@@ -95,7 +95,7 @@ public class SongForDB extends Song implements Comparable<SongForDB>, Persistabl
     }
     
     /**
-        *Implement method defined in Persistable<> interface, definining
+        *Implement method defined in Persistable interface, definining
         *the database key field.
         *
         * @author Baseem Astiphan
@@ -108,7 +108,7 @@ public class SongForDB extends Song implements Comparable<SongForDB>, Persistabl
     }
     
     /**
-        *Implement method defined in Persistable<> interface, definining
+        *Implement method defined in Persistable interface, definining
         *how the instance gets persisted to a database
         *
         * @author Baseem Astiphan
@@ -127,7 +127,7 @@ public class SongForDB extends Song implements Comparable<SongForDB>, Persistabl
     }
 
     /**
-        *Implement method defined in Persistable<> interface, definining
+        *Implement method defined in Persistable interface, definining
         *how a new object is created from a database line
         *
         * @author Baseem Astiphan
@@ -197,6 +197,7 @@ public class SongForDB extends Song implements Comparable<SongForDB>, Persistabl
         *
         * @author Baseem Astiphan
         * @param itemCode itemCode to be added
+        * @return boolean true if itemcode is available
     */
     public static boolean isItemCodeAvailable(String itemCode)
     {

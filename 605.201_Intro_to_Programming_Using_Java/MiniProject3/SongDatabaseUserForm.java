@@ -1,5 +1,3 @@
-//HAVE NOT YET CONTROLLED FOR PRICE, MAKE SURE IT IS APPROPRIATE
-
 import javafx.application.Application;
 import javafx.stage.*;
 import javafx.scene.*;
@@ -28,7 +26,7 @@ public class SongDatabaseUserForm extends Application
     private SongDataContext dataContext;
     
     //Button to add song
-    private Button addButton = new Button("Add");
+    private Button addButton; // = new Button("Add");
     
     //Button to edit song
     private Button editButton;
@@ -81,6 +79,8 @@ public class SongDatabaseUserForm extends Application
     //The index in the array/combo of the selected song
     private int selectedSongIndex;
 
+    private Label validationLabel;
+
     /**
         *Override of the application start method, used to layout
         *the GUI.
@@ -90,43 +90,23 @@ public class SongDatabaseUserForm extends Application
     */
     public void start(Stage primaryStage)
     {
-        //Put below into a separate class, that launces the app
-        /*
         String fileEntry;
-        Scanner input = new Scanner(System.in);
-
-        if (this.getParameters().getUnnamed().size() == 0)
-        {
-            System.out.println("Please enter a database name");
-            return;
-        }
-
+     
         fileEntry = this.getParameters().getUnnamed().get(0).trim();
         dataContext = 
             new SongDataContext(fileEntry, "|");
 
         if (!dataContext.exists())
-        {
-            System.out.println(fileEntry + " does not exist. Would you like to " +
-                    "create it? [y/n]");
-
-            if (input.nextLine().toLowerCase().equals("y"))
+        { 
+            try
             {
-                try
-                {
-                    dataContext.createNewDataFile();
-                }
-                catch(Exception ex)
-                {
-                    System.out.println(ex);
-                }
-            }       
-            else
+                dataContext.createNewDataFile();
+            }
+            catch(Exception ex)
             {
-                return;
+                System.out.println(ex);
             }
         }
-        */
         
         //set form title
         primaryStage.setTitle("Songs Libaray");
@@ -310,6 +290,16 @@ public class SongDatabaseUserForm extends Application
             }
         });
 
+        //Event handler for the exit button
+        exitButton.setOnAction(new EventHandler<ActionEvent>()
+        {
+            public void handle(ActionEvent ae)
+            {
+                //Closes the application
+                primaryStage.close();
+            }
+        });
+
         //Listener for combobox change, using anonymous inner method
         songCombo.getSelectionModel().selectedIndexProperty().addListener(
             new ChangeListener<Number>()
@@ -348,8 +338,13 @@ public class SongDatabaseUserForm extends Application
         GridPane.setConstraints(statusLabel, 0, 7);
         entryGrid.getChildren().add(statusLabel);
 
+        //Create and add validation label
+        validationLabel = new Label("");
+        // GridPane.setConstraints(validationLabel, 0, 8);
+        entryGrid.add(validationLabel, 0, 8, 2, 1);
+
         //Create a scene to hold the layout
-        Scene songScene = new Scene(entryGrid, 500, 350);
+        Scene songScene = new Scene(entryGrid, 500, 375);
 
         //Load up the combobox
         loadComboBox();
@@ -374,6 +369,9 @@ public class SongDatabaseUserForm extends Application
         //Refresh the array of songs
         refreshSongArray();
 
+        //Clear the combobox
+        songCombo.getItems().clear();
+        
         //Exit prematurely if the array is empty (no songs)
         if (songArray.length == 0)
         {
@@ -386,8 +384,6 @@ public class SongDatabaseUserForm extends Application
             selectedSong = songArray[0];
         }
 
-        //Clear the combobox
-        songCombo.getItems().clear();
 
         //Add the title of each song in songArray to the combobox
         for(SongForDB s : songArray)
@@ -409,6 +405,8 @@ public class SongDatabaseUserForm extends Application
         if (selectedSong == null)
         {
             //Set prompt text for combobox
+            // songCombo.setValue("");
+            songCombo.setValue("");
             songCombo.setPromptText("No Selected Item");
             
             //Blank out all other textfields
@@ -447,6 +445,11 @@ public class SongDatabaseUserForm extends Application
         switch(formStatus)
         {
             case ADD:  //form is in add mode
+                //validate
+                if (!validateUserEntry())
+                {
+                    return;
+                }
                 //Create a new song based on data in fields
                 song = generateSongFromFields();
                 
@@ -463,6 +466,12 @@ public class SongDatabaseUserForm extends Application
                 setStatus(Status.VIEW);
                 break;
             case EDIT:  //edit mode
+                //Validate 
+                if (!validateUserEntry())
+                {
+                    return;
+                }
+
                 //Create a new song based on data in fields
                 song = generateSongFromFields();
                 
@@ -492,6 +501,66 @@ public class SongDatabaseUserForm extends Application
     }
 
     /**
+        *Method to validate that all fields are entered and valid
+        *
+        * @author Baseem Astiphan
+        * @return boolean whether or not its valid
+    */
+    private boolean validateUserEntry()
+    {
+        boolean output = true;
+
+        if(songCombo.getValue() == null || songCombo.getValue().trim().isEmpty())
+        {
+            validationLabel.setText("Song cannot be blank");
+            return false;
+        }
+
+        if(itemCodeText.getText() == null || itemCodeText.getText().trim().isEmpty())
+        {
+            validationLabel.setText("Item Code cannot be blank");
+            return false;
+        }
+
+        if(descText.getText() == null || descText.getText().trim().isEmpty())
+        {
+            validationLabel.setText("Description cannot be blank");
+            return false;
+        }
+
+        if(artistText.getText() == null || artistText.getText().trim().isEmpty())
+        {
+            validationLabel.setText("Artist cannot be blank");
+            return false;
+        }
+
+        if(albumText.getText() == null || albumText.getText().trim().isEmpty())
+        {
+            validationLabel.setText("Album cannot be blank");
+            return false;
+        }
+
+        if(priceText.getText() == null || priceText.getText().trim().isEmpty())
+        {
+            validationLabel.setText("Price must be a number");
+            return false;
+        }
+
+
+        try
+        {
+            Double.parseDouble(priceText.getText());
+        }
+        catch (Exception ex)
+        {
+            validationLabel.setText("Price is not a valid number");
+            output = false;
+        }
+
+        return output;
+    }
+
+    /**
         *Method to create a new song from the values 
         *currently stored in the respective controls.
         *
@@ -500,6 +569,7 @@ public class SongDatabaseUserForm extends Application
     */
     private SongForDB generateSongFromFields()
     {
+        Double price;
         //Create a new song object
         SongForDB song = new SongForDB();
         
@@ -511,7 +581,8 @@ public class SongDatabaseUserForm extends Application
         song.setDescription(descText.getText());
         song.setArtist(artistText.getText());
         song.setAlbum(albumText.getText());
-        song.setPrice(Double.parseDouble(priceText.getText()));
+        price = Double.parseDouble(priceText.getText());
+        song.setPrice(price);
 
         //return newly created song
         return song;
@@ -613,14 +684,26 @@ public class SongDatabaseUserForm extends Application
                 
                 //set disabled property of buttons
                 addButton.setDisable(false);
-                editButton.setDisable(false);
-                deleteButton.setDisable(false);
-                acceptButton.setDisable(true);
-                cancelButton.setDisable(true);
+
+                if (selectedSong == null)
+                {
+                    editButton.setDisable(true);
+                    deleteButton.setDisable(true);
+                    acceptButton.setDisable(true);
+                    cancelButton.setDisable(true);
+                }
+                else
+                {
+                    editButton.setDisable(false);
+                    deleteButton.setDisable(false);
+                    acceptButton.setDisable(true);
+                    cancelButton.setDisable(true); 
+                }
                 exitButton.setDisable(false);
 
-                break;
+                validationLabel.setText("");
 
+                break;
         }
 
         //refresh song array when stat changes

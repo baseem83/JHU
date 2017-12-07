@@ -31,7 +31,7 @@ public abstract class TextFileDataContext<K, T extends Comparable<T> & Persistab
         *
         * @author Baseem Astiphan
         * @param filePath Path where data is stored
-        * @delimiter How elements are separated in file storage
+        * @param delimiter How elements are separated in file storage
     */
     public TextFileDataContext(String filePath, String delimiter)
     {
@@ -124,7 +124,7 @@ public abstract class TextFileDataContext<K, T extends Comparable<T> & Persistab
         * Abstract method, for retrieving elements from storage.
         *
         * @author Baseem Astiphan
-        * @return TreeMap<K,T> elements from DB
+        * @return TreeMap elements from DB
     */
     public abstract TreeMap<K, T> refreshEntitiesFromDB();
     
